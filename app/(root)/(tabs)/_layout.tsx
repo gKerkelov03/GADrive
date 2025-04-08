@@ -29,7 +29,7 @@ const TabIcon = ({
 export default function Layout() {
   return (
     <Tabs
-      initialRouteName="index"
+      initialRouteName="home"
       screenOptions={{
         tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "white",
@@ -55,7 +55,7 @@ export default function Layout() {
         options={{
           title: "Home",
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
             <TabIcon source={icons.home} focused={focused} />
           ),
         }}
@@ -65,7 +65,7 @@ export default function Layout() {
         options={{
           title: "Rides",
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
             <TabIcon source={icons.list} focused={focused} />
           ),
         }}
@@ -75,7 +75,7 @@ export default function Layout() {
         options={{
           title: "Chat",
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
             <TabIcon source={icons.chat} focused={focused} />
           ),
         }}
@@ -85,7 +85,7 @@ export default function Layout() {
         options={{
           title: "Profile",
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
             <TabIcon source={icons.profile} focused={focused} />
           ),
         }}

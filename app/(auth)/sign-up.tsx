@@ -19,6 +19,7 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+
   const [verification, setVerification] = useState({
     state: "default",
     error: "",
@@ -27,6 +28,7 @@ const SignUp = () => {
 
   const onSignUpPress = async () => {
     if (!isLoaded) return;
+
     try {
       await signUp.create({
         emailAddress: form.email,
@@ -38,12 +40,12 @@ const SignUp = () => {
         state: "pending",
       });
     } catch (err: any) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
+      console.log("here");
       console.log(JSON.stringify(err, null, 2));
       Alert.alert("Error", err.errors[0].longMessage);
     }
   };
+
   const onPressVerify = async () => {
     if (!isLoaded) return;
     try {
@@ -72,8 +74,6 @@ const SignUp = () => {
         });
       }
     } catch (err: any) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       setVerification({
         ...verification,
         error: err.errors[0].longMessage,
@@ -81,6 +81,7 @@ const SignUp = () => {
       });
     }
   };
+
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-1 bg-white">
@@ -131,9 +132,6 @@ const SignUp = () => {
         </View>
         <ReactNativeModal
           isVisible={verification.state === "pending"}
-          // onBackdropPress={() =>
-          //   setVerification({ ...verification, state: "default" })
-          // }
           onModalHide={() => {
             if (verification.state === "success") {
               setShowSuccessModal(true);
@@ -192,4 +190,5 @@ const SignUp = () => {
     </ScrollView>
   );
 };
+
 export default SignUp;

@@ -24,7 +24,6 @@ import { Ride } from "@/types/type";
 const Home = () => {
   const { user } = useUser();
   const { signOut } = useAuth();
-
   const { setUserLocation, setDestinationLocation } = useLocationStore();
 
   const handleSignOut = () => {
