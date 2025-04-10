@@ -11,25 +11,26 @@ export async function POST(request: Request) {
     if (!payment_method_id || !payment_intent_id || !customer_id) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     const paymentMethod = await stripe.paymentMethods.attach(
       payment_method_id,
-      { customer: customer_id },
+      { customer: customer_id }
     );
 
+    console.log("before done");
     const result = await stripe.paymentIntents.confirm(payment_intent_id, {
       payment_method: paymentMethod.id,
     });
-
+    console.log("done");
     return new Response(
       JSON.stringify({
         success: true,
         message: "Payment successful",
         result: result,
-      }),
+      })
     );
   } catch (error) {
     console.error("Error paying:", error);

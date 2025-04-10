@@ -12,6 +12,7 @@ import { tokenCache } from "@/lib/auth";
 SplashScreen.preventAutoHideAsync();
 
 LogBox.ignoreLogs(["Clerk:"]);
+LogBox.ignoreLogs(["Warn:"]);
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -38,7 +39,7 @@ export default function RootLayout() {
 
   if (!publishableKey) {
     throw new Error(
-      "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env",
+      "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env"
     );
   }
 
