@@ -40,7 +40,6 @@ const SignUp = () => {
         state: "pending",
       });
     } catch (err: any) {
-      console.log("here");
       console.log(JSON.stringify(err, null, 2));
       Alert.alert("Error", err.errors[0].longMessage);
     }

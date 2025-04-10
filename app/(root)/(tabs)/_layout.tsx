@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Image, ImageSourcePropType, View } from "react-native";
+import { Image, ImageSourcePropType, View, Platform } from "react-native";
 
 import { icons } from "@/constants";
 
@@ -11,16 +11,25 @@ const TabIcon = ({
   focused: boolean;
 }) => (
   <View
-    className={`flex flex-row justify-center items-center rounded-full ${focused ? "bg-general-300" : ""}`}
+    className={`flex justify-center items-center ${focused ? "bg-general-300" : ""}`}
+    style={{
+      borderRadius: 24,
+      padding: 0,
+      margin: 0,
+    }}
   >
     <View
-      className={`rounded-full w-12 h-12 items-center justify-center ${focused ? "bg-general-400" : ""}`}
+      className={`rounded-full w-11 h-11 items-center justify-center ${focused ? "bg-general-400" : ""}`}
+      style={{
+        padding: 0,
+        margin: 0,
+      }}
     >
       <Image
         source={source}
         tintColor="white"
         resizeMode="contain"
-        className="w-7 h-7"
+        className="w-6 h-6"
       />
     </View>
   </View>
@@ -37,16 +46,24 @@ export default function Layout() {
         tabBarStyle: {
           backgroundColor: "#333333",
           borderRadius: 50,
-          paddingBottom: 0, // ios only
+          paddingBottom: 0,
+          paddingHorizontal: 0,
           overflow: "hidden",
           marginHorizontal: 20,
           marginBottom: 20,
-          height: 78,
+          height: 70,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "space-evenly",
           alignItems: "center",
           flexDirection: "row",
           position: "absolute",
+          ...Platform.select({
+            android: {
+              elevation: 8,
+              paddingTop: 0,
+              height: 65,
+            },
+          }),
         },
       }}
     >
