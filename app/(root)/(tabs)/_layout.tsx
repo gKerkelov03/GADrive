@@ -77,7 +77,7 @@ export default function Layout() {
           margin: 0,
           padding: 0,
           position: "relative",
-          top: 12,
+          top: 10,
         },
       }}
     >
