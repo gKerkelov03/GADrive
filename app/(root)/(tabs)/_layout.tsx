@@ -11,18 +11,20 @@ const TabIcon = ({
   focused: boolean;
 }) => (
   <View
-    className={`flex justify-center items-center ${focused ? "bg-general-300" : ""}`}
+    className={`flex justify-center items-center ${focused ? "" : ""}`}
     style={{
       borderRadius: 24,
       padding: 0,
       margin: 0,
+      backgroundColor: focused ? "rgba(2, 134, 255, 0.2)" : "transparent",
     }}
   >
     <View
-      className={`rounded-full w-11 h-11 items-center justify-center ${focused ? "bg-general-400" : ""}`}
+      className={`rounded-full w-11 h-11 items-center justify-center`}
       style={{
         padding: 0,
         margin: 0,
+        backgroundColor: focused ? "#0286FF" : "transparent",
       }}
     >
       <Image
@@ -44,17 +46,15 @@ export default function Layout() {
         tabBarInactiveTintColor: "white",
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "#333333",
+          backgroundColor: "#888888",
           borderRadius: 50,
           paddingVertical: 0,
           paddingHorizontal: 0,
           overflow: "hidden",
           marginHorizontal: 20,
-          marginBottom: 20,
+          marginBottom: 10,
           height: 65,
           display: "flex",
-          justifyContent: "space-evenly",
-          alignItems: "center",
           flexDirection: "row",
           position: "absolute",
           ...Platform.select({
@@ -77,7 +77,7 @@ export default function Layout() {
           margin: 0,
           padding: 0,
           position: "relative",
-          top: 10,
+          top: 12,
         },
       }}
     >
