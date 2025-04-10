@@ -46,12 +46,12 @@ export default function Layout() {
         tabBarStyle: {
           backgroundColor: "#333333",
           borderRadius: 50,
-          paddingBottom: 0,
+          paddingVertical: 0,
           paddingHorizontal: 0,
           overflow: "hidden",
           marginHorizontal: 20,
           marginBottom: 20,
-          height: 70,
+          height: 65,
           display: "flex",
           justifyContent: "space-evenly",
           alignItems: "center",
@@ -60,10 +60,24 @@ export default function Layout() {
           ...Platform.select({
             android: {
               elevation: 8,
-              paddingTop: 0,
-              height: 65,
+            },
+            ios: {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
             },
           }),
+        },
+        tabBarItemStyle: {
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: 65,
+          margin: 0,
+          padding: 0,
+          position: "relative",
+          top: 12,
         },
       }}
     >
