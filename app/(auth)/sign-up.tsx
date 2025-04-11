@@ -50,11 +50,11 @@ const SignUp = () => {
   const [country, setCountry] = useState<Country | null>(null);
   const [withCountryNameButton, setWithCountryNameButton] =
     useState<boolean>(false);
-  const [withFlag, setWithFlag] = useState<boolean>(true);
-  const [withEmoji, setWithEmoji] = useState<boolean>(true);
-  const [withFilter, setWithFilter] = useState<boolean>(true);
-  const [withAlphaFilter, setWithAlphaFilter] = useState<boolean>(false);
-  const [withCallingCode, setWithCallingCode] = useState<boolean>(true);
+  const [withFlag] = useState<boolean>(true);
+  const [withEmoji] = useState<boolean>(true);
+  const [withFilter] = useState<boolean>(true);
+  const [withAlphaFilter] = useState<boolean>(false);
+  const [withCallingCode] = useState<boolean>(true);
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<FormTouched>({});
@@ -96,8 +96,22 @@ const SignUp = () => {
       }
     }
     if (field === "phone") {
-      if (value && !/^\d{10,}$/.test(value.replace(/\D/g, ""))) {
+      // Remove all non-digit characters
+      const digitsOnly = value.replace(/\D/g, "");
+
+      // Check if the number is empty
+      if (!digitsOnly) {
+        return "Phone number is required";
+      }
+
+      // Check if the number has at least 6 digits (minimum length for a valid phone number)
+      if (digitsOnly.length < 6) {
         return "Please enter a valid phone number";
+      }
+
+      // Check if the number has more than 15 digits (maximum length for a phone number)
+      if (digitsOnly.length > 15) {
+        return "Phone number is too long";
       }
     }
     if (field === "password") {
@@ -152,12 +166,19 @@ const SignUp = () => {
     }
 
     try {
-      await signUp.create({
+      // Create user in Clerk with only required fields
+      const signUpResult = await signUp.create({
         emailAddress: form.email,
         password: form.password,
+      });
+
+      // Update Clerk user profile with additional information
+      await signUp.update({
         firstName: form.firstName,
         lastName: form.lastName,
       });
+
+      // Prepare email verification
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setVerification({
         ...verification,
@@ -172,13 +193,21 @@ const SignUp = () => {
   const onPressVerify = async () => {
     if (!isLoaded) return;
     try {
+      console.log("Attempting verification with code:", verification.code);
+
+      // Complete email verification with Clerk
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code: verification.code,
       });
+
+      console.log(
+        "Verification response:",
+        JSON.stringify(completeSignUp, null, 2)
+      );
+
       if (completeSignUp.status === "complete") {
-        await fetchAPI("/(api)/user", {
-          method: "POST",
-          body: JSON.stringify({
+        try {
+          console.log("Creating database user with data:", {
             first_name: form.firstName,
             last_name: form.lastName,
             email: form.email,
@@ -186,14 +215,49 @@ const SignUp = () => {
               ? `+${country?.callingCode?.[0] || "1"}${form.phone}`
               : null,
             clerkId: completeSignUp.createdUserId,
-          }),
-        });
-        await setActive({ session: completeSignUp.createdSessionId });
-        setVerification({
-          ...verification,
-          state: "success",
-        });
+          });
+
+          // Create user in our database
+          const response = await fetchAPI("/(api)/user", {
+            method: "POST",
+            body: JSON.stringify({
+              first_name: form.firstName,
+              last_name: form.lastName,
+              email: form.email,
+              phone: form.phone
+                ? `+${country?.callingCode?.[0] || "1"}${form.phone}`
+                : null,
+              clerkId: completeSignUp.createdUserId,
+            }),
+          });
+
+          const data = await response.json();
+          console.log("Database response:", data);
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to create user in database");
+          }
+
+          // Set the active session
+          await setActive({ session: completeSignUp.createdSessionId });
+
+          // Show success modal and redirect
+          setVerification({
+            ...verification,
+            state: "success",
+            error: "", // Clear any previous errors
+          });
+          setShowSuccessModal(true);
+        } catch (err: any) {
+          console.error("Error creating database user:", err);
+          setVerification({
+            ...verification,
+            error: err.message || "Error creating user. Please try again.",
+            state: "failed",
+          });
+        }
       } else {
+        console.log("Verification status not complete:", completeSignUp.status);
         setVerification({
           ...verification,
           error: "Verification failed. Please try again.",
@@ -201,9 +265,12 @@ const SignUp = () => {
         });
       }
     } catch (err: any) {
+      console.error("Full verification error:", JSON.stringify(err, null, 2));
       setVerification({
         ...verification,
-        error: err.errors[0].longMessage,
+        error:
+          err.errors?.[0]?.longMessage ||
+          "Invalid verification code. Please try again.",
         state: "failed",
       });
     }
@@ -348,7 +415,9 @@ const SignUp = () => {
           </Link>
         </View>
         <ReactNativeModal
-          isVisible={verification.state === "pending"}
+          isVisible={
+            verification.state === "pending" || verification.state === "failed"
+          }
           onModalHide={() => {
             if (verification.state === "success") {
               setShowSuccessModal(true);
@@ -384,7 +453,12 @@ const SignUp = () => {
             />
           </View>
         </ReactNativeModal>
-        <ReactNativeModal isVisible={showSuccessModal}>
+        <ReactNativeModal
+          isVisible={showSuccessModal}
+          onModalHide={() => {
+            router.replace("/(root)/(tabs)/home");
+          }}
+        >
           <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
             <Image
               source={images.check}
@@ -398,7 +472,10 @@ const SignUp = () => {
             </Text>
             <CustomButton
               title="Browse Home"
-              onPress={() => router.push(`/(root)/(tabs)/home`)}
+              onPress={() => {
+                setShowSuccessModal(false);
+                router.replace("/(root)/(tabs)/home");
+              }}
               className="mt-5"
             />
           </View>

@@ -3,7 +3,7 @@ import { neon } from "@neondatabase/serverless";
 export async function POST(request: Request) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
-    const { first_name, last_name, email, phone, clerkId } =
+    const { first_name, last_name, email, phone_number, clerkId } =
       await request.json();
 
     if (!first_name || !last_name || !email || !clerkId) {
@@ -15,26 +15,26 @@ export async function POST(request: Request) {
 
     const response = await sql`
       INSERT INTO users (
-        name, 
         first_name,
         last_name,
         email,
-        phone,
+        phone_number,
         clerk_id
       ) 
       VALUES (
-        ${`${first_name} ${last_name}`}, 
-        ${first_name},
+        ${first_name}, 
         ${last_name},
         ${email},
-        ${phone || null},
+        ${phone_number || null},
         ${clerkId}
-     );`;
+      )
+      RETURNING *;
+    `;
 
-    return Response.json({ data: response }, { status: 201 });
+    return Response.json({ data: response[0] }, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);
-    return Response.json({ error: "Internal Server Error" }, { status: 500 });
+    return Response.json({ error: "Error creating user" }, { status: 500 });
   }
 }
 
