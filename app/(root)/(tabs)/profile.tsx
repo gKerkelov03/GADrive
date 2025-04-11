@@ -8,12 +8,13 @@ import {
   View,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import InputField from "@/components/InputField";
 import { icons } from "@/constants";
-import { useFetch } from "@/lib/fetch";
+import { fetchAPI, useFetch } from "@/lib/fetch";
 
 interface UserData {
   phone_number: string;
@@ -36,6 +37,7 @@ interface FormTouched {
 const Profile = () => {
   const { user } = useUser();
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editedData, setEditedData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -49,6 +51,7 @@ const Profile = () => {
     data: userData,
     loading,
     error,
+    refetch,
   } = useFetch<UserData>(`/(api)/user/${user?.id}`);
 
   useEffect(() => {
@@ -142,8 +145,45 @@ const Profile = () => {
       return;
     }
 
-    // TODO: Implement save functionality
-    setIsEditing(false);
+    setIsSaving(true);
+
+    try {
+      // Update Clerk user profile (excluding phone number)
+      if (user) {
+        await user.update({
+          firstName: editedData.firstName,
+          lastName: editedData.lastName,
+        });
+      }
+
+      // Update user in database
+      const response = await fetchAPI(`/(api)/user/${user?.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          first_name: editedData.firstName,
+          last_name: editedData.lastName,
+          email: editedData.email,
+          phone_number: editedData.phone,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update user in database");
+      }
+
+      // Refresh user data
+      await refetch();
+
+      Alert.alert("Success", "Profile updated successfully");
+      setIsEditing(false);
+    } catch (err: any) {
+      console.error("Error updating profile:", err);
+      Alert.alert("Error", err.message || "Failed to update profile");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -157,12 +197,17 @@ const Profile = () => {
           <TouchableOpacity
             onPress={() => (isEditing ? handleSave() : setIsEditing(true))}
             className="bg-neutral-100 p-2 rounded-full"
+            disabled={isSaving}
           >
-            <MaterialIcons
-              name={isEditing ? "check" : "edit"}
-              size={24}
-              color="#6B7280"
-            />
+            {isSaving ? (
+              <ActivityIndicator size="small" color="#6B7280" />
+            ) : (
+              <MaterialIcons
+                name={isEditing ? "check" : "edit"}
+                size={24}
+                color="#6B7280"
+              />
+            )}
           </TouchableOpacity>
         </View>
 
