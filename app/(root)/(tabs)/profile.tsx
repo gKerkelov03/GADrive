@@ -6,7 +6,6 @@ import InputField from "@/components/InputField";
 
 const Profile = () => {
   const { user } = useUser();
-  console.log(user?.username);
 
   return (
     <SafeAreaView className="flex-1">
