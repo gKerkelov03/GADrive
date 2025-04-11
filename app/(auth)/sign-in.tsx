@@ -8,16 +8,75 @@ import InputField from "@/components/InputField";
 import OAuth from "@/components/OAuth";
 import { icons, images } from "@/constants";
 
+interface FormErrors {
+  email?: string;
+  password?: string;
+}
+
+interface FormTouched {
+  email?: boolean;
+  password?: boolean;
+}
+
 const SignIn = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<FormTouched>({});
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
+  const validateField = (field: keyof FormErrors, value: string) => {
+    if (field === "email") {
+      if (!value.trim()) {
+        return "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        return "Please enter a valid email address";
+      }
+    }
+    if (field === "password") {
+      if (!value) {
+        return "Password is required";
+      }
+    }
+    return undefined;
+  };
+
+  const handleBlur = (field: keyof FormErrors) => {
+    setTouched({ ...touched, [field]: true });
+    const error = validateField(field, form[field]);
+    if (error) {
+      setErrors({ ...errors, [field]: error });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+    let isValid = true;
+
+    Object.keys(form).forEach((key) => {
+      const error = validateField(
+        key as keyof FormErrors,
+        form[key as keyof typeof form]
+      );
+      if (error) {
+        newErrors[key as keyof FormErrors] = error;
+        isValid = false;
+      }
+    });
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const onSignInPress = useCallback(async () => {
     if (!isLoaded) return;
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const signInAttempt = await signIn.create({
@@ -34,9 +93,15 @@ const SignIn = () => {
       }
     } catch (err: any) {
       console.log(JSON.stringify(err, null, 2));
-      Alert.alert("Error", err.errors[0].longMessage);
+      if (err.errors[0].code === "form_password_incorrect") {
+        setErrors({ ...errors, password: "Incorrect password" });
+      } else if (err.errors[0].code === "form_identifier_not_found") {
+        setErrors({ ...errors, email: "Email not found" });
+      } else {
+        Alert.alert("Error", err.errors[0].longMessage);
+      }
     }
-  }, [isLoaded, form]);
+  }, [isLoaded, form, errors]);
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -55,7 +120,15 @@ const SignIn = () => {
             icon={icons.email}
             textContentType="emailAddress"
             value={form.email}
-            onChangeText={(value) => setForm({ ...form, email: value })}
+            onChangeText={(value) => {
+              setForm({ ...form, email: value });
+              if (errors.email && touched.email) {
+                const error = validateField("email", value);
+                setErrors({ ...errors, email: error });
+              }
+            }}
+            onBlur={() => handleBlur("email")}
+            error={touched.email ? errors.email : undefined}
           />
 
           <InputField
@@ -65,7 +138,15 @@ const SignIn = () => {
             secureTextEntry={true}
             textContentType="password"
             value={form.password}
-            onChangeText={(value) => setForm({ ...form, password: value })}
+            onChangeText={(value) => {
+              setForm({ ...form, password: value });
+              if (errors.password && touched.password) {
+                const error = validateField("password", value);
+                setErrors({ ...errors, password: error });
+              }
+            }}
+            onBlur={() => handleBlur("password")}
+            error={touched.password ? errors.password : undefined}
           />
 
           <CustomButton

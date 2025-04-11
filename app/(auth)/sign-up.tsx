@@ -27,6 +27,22 @@ LogBox.ignoreLogs([
   "Support for defaultProps will be removed from function components",
 ]);
 
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+}
+
+interface FormTouched {
+  firstName?: boolean;
+  lastName?: boolean;
+  email?: boolean;
+  phone?: boolean;
+  password?: boolean;
+}
+
 const SignUp = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -40,6 +56,8 @@ const SignUp = () => {
   const [withAlphaFilter, setWithAlphaFilter] = useState<boolean>(false);
   const [withCallingCode, setWithCallingCode] = useState<boolean>(true);
   const [showCountryPicker, setShowCountryPicker] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<FormTouched>({});
 
   const [form, setForm] = useState({
     firstName: "",
@@ -55,6 +73,72 @@ const SignUp = () => {
     code: "",
   });
 
+  const validateField = (field: keyof FormErrors, value: string) => {
+    if (field === "firstName") {
+      if (!value.trim()) {
+        return "First name is required";
+      } else if (value.length < 2) {
+        return "First name must be at least 2 characters";
+      }
+    }
+    if (field === "lastName") {
+      if (!value.trim()) {
+        return "Last name is required";
+      } else if (value.length < 2) {
+        return "Last name must be at least 2 characters";
+      }
+    }
+    if (field === "email") {
+      if (!value.trim()) {
+        return "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        return "Please enter a valid email address";
+      }
+    }
+    if (field === "phone") {
+      if (value && !/^\d{10,}$/.test(value.replace(/\D/g, ""))) {
+        return "Please enter a valid phone number";
+      }
+    }
+    if (field === "password") {
+      if (!value) {
+        return "Password is required";
+      } else if (value.length < 8) {
+        return "Password must be at least 8 characters";
+      } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
+        return "Password must contain uppercase, lowercase, and numbers";
+      }
+    }
+    return undefined;
+  };
+
+  const handleBlur = (field: keyof FormErrors) => {
+    setTouched({ ...touched, [field]: true });
+    const error = validateField(field, form[field]);
+    if (error) {
+      setErrors({ ...errors, [field]: error });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+    let isValid = true;
+
+    Object.keys(form).forEach((key) => {
+      const error = validateField(
+        key as keyof FormErrors,
+        form[key as keyof typeof form]
+      );
+      if (error) {
+        newErrors[key as keyof FormErrors] = error;
+        isValid = false;
+      }
+    });
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const onSelect = (country: Country) => {
     setCountryCode(country.cca2);
     setCountry(country);
@@ -63,8 +147,7 @@ const SignUp = () => {
   const onSignUpPress = async () => {
     if (!isLoaded) return;
 
-    if (!form.firstName || !form.lastName) {
-      Alert.alert("Error", "First name and last name are required");
+    if (!validateForm()) {
       return;
     }
 
@@ -141,14 +224,30 @@ const SignUp = () => {
             placeholder="Enter first name"
             icon={icons.person}
             value={form.firstName}
-            onChangeText={(value) => setForm({ ...form, firstName: value })}
+            onChangeText={(value) => {
+              setForm({ ...form, firstName: value });
+              if (errors.firstName && touched.firstName) {
+                const error = validateField("firstName", value);
+                setErrors({ ...errors, firstName: error });
+              }
+            }}
+            onBlur={() => handleBlur("firstName")}
+            error={touched.firstName ? errors.firstName : undefined}
           />
           <InputField
             label="Last Name *"
             placeholder="Enter last name"
             icon={icons.person}
             value={form.lastName}
-            onChangeText={(value) => setForm({ ...form, lastName: value })}
+            onChangeText={(value) => {
+              setForm({ ...form, lastName: value });
+              if (errors.lastName && touched.lastName) {
+                const error = validateField("lastName", value);
+                setErrors({ ...errors, lastName: error });
+              }
+            }}
+            onBlur={() => handleBlur("lastName")}
+            error={touched.lastName ? errors.lastName : undefined}
           />
           <InputField
             label="Email *"
@@ -156,7 +255,15 @@ const SignUp = () => {
             icon={icons.email}
             textContentType="emailAddress"
             value={form.email}
-            onChangeText={(value) => setForm({ ...form, email: value })}
+            onChangeText={(value) => {
+              setForm({ ...form, email: value });
+              if (errors.email && touched.email) {
+                const error = validateField("email", value);
+                setErrors({ ...errors, email: error });
+              }
+            }}
+            onBlur={() => handleBlur("email")}
+            error={touched.email ? errors.email : undefined}
           />
           <InputField
             label="Phone *"
@@ -165,7 +272,15 @@ const SignUp = () => {
             textContentType="telephoneNumber"
             keyboardType="phone-pad"
             value={form.phone}
-            onChangeText={(value) => setForm({ ...form, phone: value })}
+            onChangeText={(value) => {
+              setForm({ ...form, phone: value });
+              if (errors.phone && touched.phone) {
+                const error = validateField("phone", value);
+                setErrors({ ...errors, phone: error });
+              }
+            }}
+            onBlur={() => handleBlur("phone")}
+            error={touched.phone ? errors.phone : undefined}
             leftComponent={
               <TouchableOpacity
                 onPress={() => setShowCountryPicker(true)}
@@ -208,7 +323,15 @@ const SignUp = () => {
             secureTextEntry={true}
             textContentType="password"
             value={form.password}
-            onChangeText={(value) => setForm({ ...form, password: value })}
+            onChangeText={(value) => {
+              setForm({ ...form, password: value });
+              if (errors.password && touched.password) {
+                const error = validateField("password", value);
+                setErrors({ ...errors, password: error });
+              }
+            }}
+            onBlur={() => handleBlur("password")}
+            error={touched.password ? errors.password : undefined}
           />
           <CustomButton
             title="Sign Up"

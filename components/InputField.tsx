@@ -21,6 +21,8 @@ const InputField = ({
   iconStyle,
   className,
   leftComponent,
+  error,
+  onBlur,
   ...props
 }: InputFieldProps) => {
   return (
@@ -33,7 +35,9 @@ const InputField = ({
             {label}
           </Text>
           <View
-            className={`flex flex-row justify-start items-center relative bg-neutral-100 rounded-full border border-neutral-100 focus:border-primary-500 ${containerStyle}`}
+            className={`flex flex-row justify-start items-center relative bg-neutral-100 rounded-full border ${
+              error ? "border-red-500" : "border-neutral-100"
+            } focus:border-primary-500 ${containerStyle}`}
           >
             {icon && (
               <Image source={icon} className={`w-6 h-6 ml-4 ${iconStyle}`} />
@@ -42,9 +46,15 @@ const InputField = ({
             <TextInput
               className={`rounded-full p-4 font-JakartaSemiBold text-[15px] flex-1 ${inputStyle} text-left`}
               secureTextEntry={secureTextEntry}
+              onBlur={onBlur}
               {...props}
             />
           </View>
+          {error && (
+            <Text className="text-red-500 text-sm mt-1 font-Jakarta">
+              {error}
+            </Text>
+          )}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
