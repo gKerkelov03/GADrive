@@ -22,6 +22,7 @@ const InputField = ({
   iconStyle,
   className,
   leftComponent,
+  rightComponent,
   error,
   onBlur,
   ...props
@@ -62,6 +63,7 @@ const InputField = ({
               onBlur={onBlur}
               {...props}
             />
+            {rightComponent}
           </View>
           {error && <Text className="text-red-500 text-sm mt-1">{error}</Text>}
         </View>

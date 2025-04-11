@@ -349,10 +349,10 @@ const SignUp = () => {
             }}
             onBlur={() => handleBlur("phone")}
             error={touched.phone ? errors.phone : undefined}
-            leftComponent={
+            rightComponent={
               <TouchableOpacity
                 onPress={() => setShowCountryPicker(true)}
-                className="flex-row items-center mr-2"
+                className="flex-row items-center ml-2"
               >
                 <CountryPicker
                   theme={{
