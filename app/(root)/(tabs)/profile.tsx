@@ -148,12 +148,20 @@ const Profile = () => {
     setIsSaving(true);
 
     try {
-      // Update Clerk user profile (excluding phone number)
+      // Update Clerk user profile
       if (user) {
         await user.update({
           firstName: editedData.firstName,
           lastName: editedData.lastName,
         });
+
+        // Update email in Clerk if it has changed
+        if (editedData.email !== user.primaryEmailAddress?.emailAddress) {
+          const newEmail = await user.createEmailAddress({
+            email: editedData.email,
+          });
+          await user.update({ primaryEmailAddressId: newEmail.id });
+        }
       }
 
       // Update user in database
@@ -260,14 +268,9 @@ const Profile = () => {
               }
               containerStyle="w-full"
               inputStyle="p-3.5"
-              editable={isEditing}
+              editable={false}
               value={editedData.email}
-              onChangeText={(text) =>
-                setEditedData((prev) => ({ ...prev, email: text }))
-              }
-              onBlur={() => handleBlur("email")}
               icon={icons.email}
-              error={touched.email ? errors.email : undefined}
             />
 
             <InputField
