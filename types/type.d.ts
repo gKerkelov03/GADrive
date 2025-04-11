@@ -87,6 +87,7 @@ declare interface InputFieldProps extends TextInputProps {
   inputStyle?: string;
   iconStyle?: string;
   className?: string;
+  leftComponent?: React.ReactNode;
 }
 
 declare interface PaymentProps {

@@ -1,7 +1,19 @@
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, router } from "expo-router";
 import { useState } from "react";
-import { Alert, Image, ScrollView, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  LogBox,
+} from "react-native";
+import CountryPicker, {
+  Country,
+  CountryCode,
+} from "react-native-country-picker-modal";
 import { ReactNativeModal } from "react-native-modal";
 
 import CustomButton from "@/components/CustomButton";
@@ -10,13 +22,30 @@ import OAuth from "@/components/OAuth";
 import { icons, images } from "@/constants";
 import { fetchAPI } from "@/lib/fetch";
 
+// Suppress the defaultProps warning from CountryPicker
+LogBox.ignoreLogs([
+  "Support for defaultProps will be removed from function components",
+]);
+
 const SignUp = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [countryCode, setCountryCode] = useState<CountryCode>("US");
+  const [country, setCountry] = useState<Country | null>(null);
+  const [withCountryNameButton, setWithCountryNameButton] =
+    useState<boolean>(false);
+  const [withFlag, setWithFlag] = useState<boolean>(true);
+  const [withEmoji, setWithEmoji] = useState<boolean>(true);
+  const [withFilter, setWithFilter] = useState<boolean>(true);
+  const [withAlphaFilter, setWithAlphaFilter] = useState<boolean>(false);
+  const [withCallingCode, setWithCallingCode] = useState<boolean>(true);
+  const [showCountryPicker, setShowCountryPicker] = useState(false);
 
   const [form, setForm] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
+    phone: "",
     password: "",
   });
 
@@ -26,13 +55,25 @@ const SignUp = () => {
     code: "",
   });
 
+  const onSelect = (country: Country) => {
+    setCountryCode(country.cca2);
+    setCountry(country);
+  };
+
   const onSignUpPress = async () => {
     if (!isLoaded) return;
+
+    if (!form.firstName || !form.lastName) {
+      Alert.alert("Error", "First name and last name are required");
+      return;
+    }
 
     try {
       await signUp.create({
         emailAddress: form.email,
         password: form.password,
+        firstName: form.firstName,
+        lastName: form.lastName,
       });
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setVerification({
@@ -55,8 +96,12 @@ const SignUp = () => {
         await fetchAPI("/(api)/user", {
           method: "POST",
           body: JSON.stringify({
-            name: form.name,
+            first_name: form.firstName,
+            last_name: form.lastName,
             email: form.email,
+            phone: form.phone
+              ? `+${country?.callingCode?.[0] || "1"}${form.phone}`
+              : null,
             clerkId: completeSignUp.createdUserId,
           }),
         });
@@ -92,14 +137,21 @@ const SignUp = () => {
         </View>
         <View className="p-5">
           <InputField
-            label="Name"
-            placeholder="Enter name"
+            label="First Name *"
+            placeholder="Enter first name"
             icon={icons.person}
-            value={form.name}
-            onChangeText={(value) => setForm({ ...form, name: value })}
+            value={form.firstName}
+            onChangeText={(value) => setForm({ ...form, firstName: value })}
           />
           <InputField
-            label="Email"
+            label="Last Name *"
+            placeholder="Enter last name"
+            icon={icons.person}
+            value={form.lastName}
+            onChangeText={(value) => setForm({ ...form, lastName: value })}
+          />
+          <InputField
+            label="Email *"
             placeholder="Enter email"
             icon={icons.email}
             textContentType="emailAddress"
@@ -107,7 +159,50 @@ const SignUp = () => {
             onChangeText={(value) => setForm({ ...form, email: value })}
           />
           <InputField
-            label="Password"
+            label="Phone *"
+            placeholder="Enter phone number"
+            icon={icons.person}
+            textContentType="telephoneNumber"
+            keyboardType="phone-pad"
+            value={form.phone}
+            onChangeText={(value) => setForm({ ...form, phone: value })}
+            leftComponent={
+              <TouchableOpacity
+                onPress={() => setShowCountryPicker(true)}
+                className="flex-row items-center mr-2"
+              >
+                <CountryPicker
+                  theme={{
+                    primaryColor: "#0286FF",
+                    primaryColorVariant: "#0286FF",
+                    backgroundColor: "#FFFFFF",
+                    onBackgroundTextColor: "#000000",
+                    fontSize: 14,
+                  }}
+                  containerButtonStyle={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  countryCode={countryCode}
+                  withFilter={withFilter}
+                  withFlag={withFlag}
+                  withCountryNameButton={withCountryNameButton}
+                  withAlphaFilter={withAlphaFilter}
+                  withCallingCode={withCallingCode}
+                  withEmoji={withEmoji}
+                  onSelect={onSelect}
+                  visible={showCountryPicker}
+                  onClose={() => setShowCountryPicker(false)}
+                />
+                <Text className="ml-1 text-sm">
+                  +{country?.callingCode?.[0] || "1"}
+                </Text>
+                <Image source={icons.arrowDown} className="w-4 h-4 ml-1" />
+              </TouchableOpacity>
+            }
+          />
+          <InputField
+            label="Password *"
             placeholder="Enter password"
             icon={icons.lock}
             secureTextEntry={true}
