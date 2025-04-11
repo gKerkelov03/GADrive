@@ -9,6 +9,7 @@ import CustomButton from "@/components/CustomButton";
 import { images } from "@/constants";
 import { fetchAPI } from "@/lib/fetch";
 import { useLocationStore } from "@/store";
+import { StripeCreateResponse } from "@/types/stripe";
 import { PaymentProps } from "@/types/type";
 
 const Payment = ({
@@ -32,93 +33,95 @@ const Payment = ({
   const [success, setSuccess] = useState<boolean>(false);
 
   const openPaymentSheet = async () => {
-    await initializePaymentSheet();
+    console.log("Opening payment sheet...");
+    try {
+      await initializePaymentSheet();
+      console.log("Payment sheet initialized, presenting...");
+      const { error } = await presentPaymentSheet();
+      console.log(
+        "Payment sheet presentation result:",
+        error ? error : "success"
+      );
 
-    const { error } = await presentPaymentSheet();
-
-    if (error) {
-      console.log(`Error code: ${error.code}`, error.message);
-    } else {
-      setSuccess(true);
+      if (error) {
+        console.error(`Error code: ${error.code}`, error.message);
+        Alert.alert("Payment Error", error.message);
+      } else {
+        setSuccess(true);
+      }
+    } catch (error) {
+      console.error("Error in openPaymentSheet:", error);
+      Alert.alert("Payment Error", "Failed to process payment");
     }
   };
 
   const initializePaymentSheet = async () => {
-    const { error } = await initPaymentSheet({
-      merchantDisplayName: "Example, Inc.",
-      intentConfiguration: {
-        mode: {
-          amount: parseInt(amount) * 100,
-          currencyCode: "usd",
+    console.log("Initializing payment sheet with amount:", amount);
+    try {
+      const response = await fetchAPI("/(api)/(stripe)/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        confirmHandler: async (
-          paymentMethod,
-          shouldSavePaymentMethod,
-          intentCreationCallback
-        ) => {
-          const { paymentIntent, customer } = await fetchAPI(
-            "/(api)/(stripe)/create",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                name: fullName || email.split("@")[0],
-                email: email,
-                amount: amount,
-                paymentMethodId: paymentMethod.id,
-              }),
-            }
-          );
+        body: JSON.stringify({
+          name: fullName || email.split("@")[0],
+          email: email,
+          amount: amount,
+        }),
+      });
 
-          if (paymentIntent.client_secret) {
-            const { result } = await fetchAPI("/(api)/(stripe)/pay", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                payment_method_id: paymentMethod.id,
-                payment_intent_id: paymentIntent.id,
-                customer_id: customer,
-                client_secret: paymentIntent.client_secret,
-              }),
-            });
+      const { paymentIntent, ephemeralKey, customer } =
+        (await response.json()) as StripeCreateResponse;
+      console.log("Payment intent created:", paymentIntent.id);
 
-            if (result.client_secret) {
-              await fetchAPI("/(api)/ride/create", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  origin_address: userAddress,
-                  destination_address: destinationAddress,
-                  origin_latitude: userLatitude,
-                  origin_longitude: userLongitude,
-                  destination_latitude: destinationLatitude,
-                  destination_longitude: destinationLongitude,
-                  ride_time: rideTime.toFixed(0),
-                  fare_price: parseInt(amount) * 100,
-                  payment_status: "paid",
-                  driver_id: driverId,
-                  user_id: userId,
-                }),
-              });
+      if (!paymentIntent?.client_secret) {
+        throw new Error("Failed to create payment intent");
+      }
 
-              intentCreationCallback({
-                clientSecret: result.client_secret,
-              });
-            }
-          }
+      const { error } = await initPaymentSheet({
+        merchantDisplayName: "Ride App",
+        paymentIntentClientSecret: paymentIntent.client_secret,
+        customerId: customer,
+        customerEphemeralKeySecret: ephemeralKey.secret,
+        returnURL: "myapp://book-ride",
+        defaultBillingDetails: {
+          name: fullName || email.split("@")[0],
+          email: email,
         },
-      },
-      returnURL: "myapp://book-ride",
-    });
+      });
 
-    if (!error) {
-      // setLoading(true);
+      if (error) {
+        console.error("Error initializing payment sheet:", error);
+        throw error;
+      }
+
+      // Create ride record after successful payment
+      await fetchAPI("/(api)/ride/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          origin_address: userAddress,
+          destination_address: destinationAddress,
+          origin_latitude: userLatitude,
+          origin_longitude: userLongitude,
+          destination_latitude: destinationLatitude,
+          destination_longitude: destinationLongitude,
+          ride_time: rideTime.toFixed(0),
+          fare_price: parseInt(amount) * 100,
+          payment_status: "paid",
+          driver_id: driverId,
+          user_id: userId,
+        }),
+      });
+    } catch (error) {
+      console.error("Error in initializePaymentSheet:", error);
+      Alert.alert(
+        "Payment Error",
+        error instanceof Error ? error.message : "Failed to process payment"
+      );
+      throw error;
     }
   };
 

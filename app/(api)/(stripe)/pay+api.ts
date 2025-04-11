@@ -5,37 +5,48 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { payment_method_id, payment_intent_id, customer_id, client_secret } =
-      body;
+    const { payment_intent_id, payment_method_id } = body;
 
-    if (!payment_method_id || !payment_intent_id || !customer_id) {
+    console.log("Confirming payment intent:", {
+      payment_intent_id,
+      payment_method_id,
+    });
+
+    if (!payment_intent_id || !payment_method_id) {
+      console.error("Missing required fields:", {
+        payment_intent_id,
+        payment_method_id,
+      });
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400 }
       );
     }
 
-    const paymentMethod = await stripe.paymentMethods.attach(
-      payment_method_id,
-      { customer: customer_id }
-    );
-
-    console.log("before done");
+    console.log("Confirming payment intent...");
     const result = await stripe.paymentIntents.confirm(payment_intent_id, {
-      payment_method: paymentMethod.id,
+      payment_method: payment_method_id,
     });
-    console.log("done");
+    console.log("Payment intent confirmed:", result.status);
+
     return new Response(
       JSON.stringify({
         success: true,
         message: "Payment successful",
-        result: result,
+        result: {
+          client_secret: result.client_secret,
+          status: result.status,
+        },
       })
     );
   } catch (error) {
-    console.error("Error paying:", error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
-      status: 500,
-    });
+    console.error("Error in payment confirmation:", error);
+    return new Response(
+      JSON.stringify({
+        error: error instanceof Error ? error.message : "Internal Server Error",
+        details: error instanceof Error ? error.stack : undefined,
+      }),
+      { status: 500 }
+    );
   }
 }
