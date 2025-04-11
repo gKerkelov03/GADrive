@@ -6,6 +6,7 @@ import { formatTime } from "@/lib/utils";
 import { DriverCardProps } from "@/types/type";
 
 const DriverCard = ({ item, selected, setSelected }: DriverCardProps) => {
+  console.log(item);
   return (
     <TouchableOpacity
       onPress={setSelected}
@@ -24,7 +25,9 @@ const DriverCard = ({ item, selected, setSelected }: DriverCardProps) => {
 
           <View className="flex flex-row items-center space-x-1 ml-2">
             <Image source={icons.star} className="w-3.5 h-3.5" />
-            <Text className="text-sm font-JakartaRegular">4</Text>
+            <Text className="text-sm font-JakartaRegular">
+              {Number(item.rating).toFixed(1)}
+            </Text>
           </View>
         </View>
 
