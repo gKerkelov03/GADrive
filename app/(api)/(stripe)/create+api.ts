@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         JSON.stringify({ error: "Missing required fields" }),
         {
           status: 400,
-        }
+        },
       );
     }
 
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     console.log("Creating ephemeral key...");
     const ephemeralKey = await stripe.ephemeralKeys.create(
       { customer: customer.id },
-      { apiVersion: "2024-06-20" }
+      { apiVersion: "2024-06-20" },
     );
 
     console.log("Creating payment intent...");
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         },
         ephemeralKey: ephemeralKey,
         customer: customer.id,
-      })
+      }),
     );
   } catch (error) {
     console.error("Error in payment intent creation:", error);
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
         error: error instanceof Error ? error.message : "Internal Server Error",
         details: error instanceof Error ? error.stack : undefined,
       }),
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

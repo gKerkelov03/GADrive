@@ -127,7 +127,7 @@ const Profile = () => {
     Object.keys(editedData).forEach((key) => {
       const error = validateField(
         key as keyof FormErrors,
-        editedData[key as keyof typeof editedData]
+        editedData[key as keyof typeof editedData],
       );
       if (error) {
         newErrors[key as keyof FormErrors] = error;

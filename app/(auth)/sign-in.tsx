@@ -59,7 +59,7 @@ const SignIn = () => {
     Object.keys(form).forEach((key) => {
       const error = validateField(
         key as keyof FormErrors,
-        form[key as keyof typeof form]
+        form[key as keyof typeof form],
       );
       if (error) {
         newErrors[key as keyof FormErrors] = error;

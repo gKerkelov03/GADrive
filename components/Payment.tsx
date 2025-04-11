@@ -40,7 +40,7 @@ const Payment = ({
       const { error } = await presentPaymentSheet();
       console.log(
         "Payment sheet presentation result:",
-        error ? error : "success"
+        error ? error : "success",
       );
 
       if (error) {
@@ -119,7 +119,7 @@ const Payment = ({
       console.error("Error in initializePaymentSheet:", error);
       Alert.alert(
         "Payment Error",
-        error instanceof Error ? error.message : "Failed to process payment"
+        error instanceof Error ? error.message : "Failed to process payment",
       );
       throw error;
     }

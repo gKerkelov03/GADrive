@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       });
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
           client_secret: result.client_secret,
           status: result.status,
         },
-      })
+      }),
     );
   } catch (error) {
     console.error("Error in payment confirmation:", error);
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         error: error instanceof Error ? error.message : "Internal Server Error",
         details: error instanceof Error ? error.stack : undefined,
       }),
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

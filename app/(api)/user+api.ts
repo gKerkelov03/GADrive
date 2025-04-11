@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     if (!first_name || !last_name || !email || !clerkId) {
       return Response.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
