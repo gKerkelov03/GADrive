@@ -1,11 +1,25 @@
 import { useUser } from "@clerk/clerk-expo";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import InputField from "@/components/InputField";
+import { useFetch } from "@/lib/fetch";
 
 const Profile = () => {
   const { user } = useUser();
+  const {
+    data: userData,
+    loading,
+    error,
+  } = useFetch(`/(api)/user/${user?.id}`);
+
+  useEffect(() => {
+    console.log("User ID:", user?.id);
+    console.log("User data from API:", userData);
+    console.log("Loading:", loading);
+    console.log("Error:", error);
+  }, [user?.id, userData, loading, error]);
 
   return (
     <SafeAreaView className="flex-1">
@@ -55,7 +69,7 @@ const Profile = () => {
 
             <InputField
               label="Phone"
-              placeholder={user?.primaryPhoneNumber?.phoneNumber || "Not Found"}
+              placeholder={userData?.phone_number || "Not Found"}
               containerStyle="w-full"
               inputStyle="p-3.5"
               editable={false}
