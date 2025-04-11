@@ -1,3 +1,4 @@
+import React from "react";
 import {
   TextInput,
   View,
@@ -25,6 +26,20 @@ const InputField = ({
   onBlur,
   ...props
 }: InputFieldProps) => {
+  const renderIcon = () => {
+    if (!icon) return null;
+
+    if (React.isValidElement(icon)) {
+      return <View className={`ml-4 ${iconStyle}`}>{icon}</View>;
+    }
+
+    return (
+      <View className={`ml-4 ${iconStyle}`}>
+        <Image source={icon as any} className="w-6 h-6" />
+      </View>
+    );
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -39,9 +54,7 @@ const InputField = ({
               error ? "border-red-500" : "border-neutral-100"
             } focus:border-primary-500 ${containerStyle}`}
           >
-            {icon && (
-              <Image source={icon} className={`w-6 h-6 ml-4 ${iconStyle}`} />
-            )}
+            {renderIcon()}
             {leftComponent}
             <TextInput
               className={`rounded-full p-4 font-JakartaSemiBold text-[15px] flex-1 ${inputStyle} text-left`}
@@ -50,11 +63,7 @@ const InputField = ({
               {...props}
             />
           </View>
-          {error && (
-            <Text className="text-red-500 text-sm mt-1 font-Jakarta">
-              {error}
-            </Text>
-          )}
+          {error && <Text className="text-red-500 text-sm mt-1">{error}</Text>}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

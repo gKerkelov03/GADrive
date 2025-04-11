@@ -80,7 +80,7 @@ declare interface GoogleInputProps {
 
 declare interface InputFieldProps extends TextInputProps {
   label: string;
-  icon?: any;
+  icon?: number | object | React.ReactNode;
   secureTextEntry?: boolean;
   labelStyle?: string;
   containerStyle?: string;

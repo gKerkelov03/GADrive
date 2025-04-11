@@ -1,10 +1,16 @@
 import { useUser } from "@clerk/clerk-expo";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import InputField from "@/components/InputField";
+import { icons } from "@/constants";
 import { useFetch } from "@/lib/fetch";
+
+interface UserData {
+  phone_number: string;
+}
 
 const Profile = () => {
   const { user } = useUser();
@@ -12,7 +18,7 @@ const Profile = () => {
     data: userData,
     loading,
     error,
-  } = useFetch(`/(api)/user/${user?.id}`);
+  } = useFetch<UserData>(`/(api)/user/${user?.id}`);
 
   useEffect(() => {
     console.log("User ID:", user?.id);
@@ -47,6 +53,7 @@ const Profile = () => {
               containerStyle="w-full"
               inputStyle="p-3.5"
               editable={false}
+              icon={icons.person}
             />
 
             <InputField
@@ -55,6 +62,7 @@ const Profile = () => {
               containerStyle="w-full"
               inputStyle="p-3.5"
               editable={false}
+              icon={icons.person}
             />
 
             <InputField
@@ -65,6 +73,7 @@ const Profile = () => {
               containerStyle="w-full"
               inputStyle="p-3.5"
               editable={false}
+              icon={icons.email}
             />
 
             <InputField
@@ -73,6 +82,7 @@ const Profile = () => {
               containerStyle="w-full"
               inputStyle="p-3.5"
               editable={false}
+              icon={<MaterialIcons name="phone" size={24} color="#6B7280" />}
             />
           </View>
         </View>

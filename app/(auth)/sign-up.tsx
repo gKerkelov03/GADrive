@@ -1,4 +1,5 @@
 import { useSignUp } from "@clerk/clerk-expo";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
@@ -335,7 +336,7 @@ const SignUp = () => {
           <InputField
             label="Phone *"
             placeholder="Enter phone number"
-            icon={icons.person}
+            icon={<MaterialIcons name="phone" size={24} color="#6B7280" />}
             textContentType="telephoneNumber"
             keyboardType="phone-pad"
             value={form.phone}
