@@ -127,7 +127,7 @@ const Profile = () => {
     Object.keys(editedData).forEach((key) => {
       const error = validateField(
         key as keyof FormErrors,
-        editedData[key as keyof typeof editedData],
+        editedData[key as keyof typeof editedData]
       );
       if (error) {
         newErrors[key as keyof FormErrors] = error;
@@ -201,7 +201,7 @@ const Profile = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         <View className="flex flex-row justify-between items-center my-5">
-          <Text className="text-2xl font-JakartaBold">My profile</Text>
+          <Text className="text-2xl font-JakartaBold">Моят профил</Text>
           <TouchableOpacity
             onPress={() => (isEditing ? handleSave() : setIsEditing(true))}
             className="bg-neutral-100 p-2 rounded-full"
@@ -232,8 +232,8 @@ const Profile = () => {
         <View className="flex flex-col items-start justify-center bg-white rounded-lg shadow-sm shadow-neutral-300 px-5 py-3">
           <View className="flex flex-col items-start justify-start w-full">
             <InputField
-              label="First name"
-              placeholder={user?.firstName || "Not Found"}
+              label="Име"
+              placeholder={user?.firstName || "Не е намерено"}
               containerStyle="w-full"
               inputStyle="p-3.5"
               editable={isEditing}
@@ -247,8 +247,8 @@ const Profile = () => {
             />
 
             <InputField
-              label="Last name"
-              placeholder={user?.lastName || "Not Found"}
+              label="Фамилия"
+              placeholder={user?.lastName || "Не е намерено"}
               containerStyle="w-full"
               inputStyle="p-3.5"
               editable={isEditing}
@@ -262,9 +262,9 @@ const Profile = () => {
             />
 
             <InputField
-              label="Email"
+              label="Имейл"
               placeholder={
-                user?.primaryEmailAddress?.emailAddress || "Not Found"
+                user?.primaryEmailAddress?.emailAddress || "Не е намерено"
               }
               containerStyle="w-full"
               inputStyle="p-3.5"
@@ -274,8 +274,8 @@ const Profile = () => {
             />
 
             <InputField
-              label="Phone"
-              placeholder={userData?.phone_number || "Not Found"}
+              label="Телефон"
+              placeholder={userData?.phone_number || "Не е намерено"}
               containerStyle="w-full"
               inputStyle="p-3.5"
               editable={isEditing}

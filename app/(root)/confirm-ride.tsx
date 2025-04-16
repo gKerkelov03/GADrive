@@ -10,7 +10,7 @@ const ConfirmRide = () => {
   const { drivers, selectedDriver, setSelectedDriver } = useDriverStore();
 
   return (
-    <RideLayout title={"Choose a Rider"} snapPoints={["65%", "85%"]}>
+    <RideLayout title={"Избери шофьор"} snapPoints={["65%", "85%"]}>
       <FlatList
         data={drivers}
         keyExtractor={(item, index) => index.toString()}
@@ -24,7 +24,7 @@ const ConfirmRide = () => {
         ListFooterComponent={() => (
           <View className="mx-5 mt-10">
             <CustomButton
-              title="Select Ride"
+              title="Избери пътуване"
               onPress={() => router.push("/(root)/book-ride")}
               disabled={!selectedDriver}
               className={!selectedDriver ? "opacity-50" : ""}

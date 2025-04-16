@@ -59,7 +59,7 @@ const SignIn = () => {
     Object.keys(form).forEach((key) => {
       const error = validateField(
         key as keyof FormErrors,
-        form[key as keyof typeof form],
+        form[key as keyof typeof form]
       );
       if (error) {
         newErrors[key as keyof FormErrors] = error;
@@ -115,8 +115,8 @@ const SignIn = () => {
 
         <View className="p-5">
           <InputField
-            label="Email"
-            placeholder="Enter email"
+            label="Имейл"
+            placeholder="Въведете имейл"
             icon={icons.email}
             textContentType="emailAddress"
             value={form.email}
@@ -132,8 +132,8 @@ const SignIn = () => {
           />
 
           <InputField
-            label="Password"
-            placeholder="Enter password"
+            label="Парола"
+            placeholder="Въведете парола"
             icon={icons.lock}
             secureTextEntry={true}
             textContentType="password"
@@ -149,11 +149,7 @@ const SignIn = () => {
             error={touched.password ? errors.password : undefined}
           />
 
-          <CustomButton
-            title="Sign In"
-            onPress={onSignInPress}
-            className="mt-6"
-          />
+          <CustomButton title="Вход" onPress={onSignInPress} className="mt-6" />
 
           <OAuth />
 
@@ -162,7 +158,7 @@ const SignIn = () => {
             className="text-lg text-center text-general-200 mt-10"
           >
             Don't have an account?{" "}
-            <Text className="text-primary-500">Sign Up</Text>
+            <Text className="text-primary-500">Регистрация</Text>
           </Link>
         </View>
       </View>

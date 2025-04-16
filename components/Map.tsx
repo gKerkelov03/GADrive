@@ -76,7 +76,7 @@ const Map = () => {
   if (error)
     return (
       <View className="flex justify-between items-center w-full">
-        <Text>Error: {error}</Text>
+        <Text>Грешка: {error}</Text>
       </View>
     );
 
@@ -113,7 +113,7 @@ const Map = () => {
               latitude: destinationLatitude,
               longitude: destinationLongitude,
             }}
-            title="Destination"
+            title="Дестинация"
             image={icons.pin}
           />
           <MapViewDirections

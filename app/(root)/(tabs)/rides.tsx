@@ -37,7 +37,9 @@ const Rides = () => {
                   alt="No recent rides found"
                   resizeMode="contain"
                 />
-                <Text className="text-sm">No recent rides found</Text>
+                <Text className="text-sm">
+                  Няма намерени скорошни пътувания
+                </Text>
               </>
             ) : (
               <ActivityIndicator size="small" color="#000" />
@@ -46,7 +48,9 @@ const Rides = () => {
         )}
         ListHeaderComponent={
           <>
-            <Text className="text-2xl font-JakartaBold my-5">All Rides</Text>
+            <Text className="text-2xl font-JakartaBold my-5">
+              Всички пътувания
+            </Text>
           </>
         }
       />

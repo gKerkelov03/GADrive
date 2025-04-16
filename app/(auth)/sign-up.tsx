@@ -142,7 +142,7 @@ const SignUp = () => {
     Object.keys(form).forEach((key) => {
       const error = validateField(
         key as keyof FormErrors,
-        form[key as keyof typeof form],
+        form[key as keyof typeof form]
       );
       if (error) {
         newErrors[key as keyof FormErrors] = error;
@@ -203,7 +203,7 @@ const SignUp = () => {
 
       console.log(
         "Verification response:",
-        JSON.stringify(completeSignUp, null, 2),
+        JSON.stringify(completeSignUp, null, 2)
       );
 
       if (completeSignUp.status === "complete") {
@@ -288,8 +288,8 @@ const SignUp = () => {
         </View>
         <View className="p-5">
           <InputField
-            label="First Name *"
-            placeholder="Enter first name"
+            label="Име *"
+            placeholder="Въведете име"
             icon={icons.person}
             value={form.firstName}
             onChangeText={(value) => {
@@ -303,8 +303,8 @@ const SignUp = () => {
             error={touched.firstName ? errors.firstName : undefined}
           />
           <InputField
-            label="Last Name *"
-            placeholder="Enter last name"
+            label="Фамилия *"
+            placeholder="Въведете фамилия"
             icon={icons.person}
             value={form.lastName}
             onChangeText={(value) => {
@@ -318,8 +318,8 @@ const SignUp = () => {
             error={touched.lastName ? errors.lastName : undefined}
           />
           <InputField
-            label="Email *"
-            placeholder="Enter email"
+            label="Имейл *"
+            placeholder="Въведете имейл"
             icon={icons.email}
             textContentType="emailAddress"
             value={form.email}
@@ -334,8 +334,8 @@ const SignUp = () => {
             error={touched.email ? errors.email : undefined}
           />
           <InputField
-            label="Phone *"
-            placeholder="Enter phone number"
+            label="Телефон *"
+            placeholder="Въведете телефонен номер"
             icon={<MaterialIcons name="phone" size={24} color="#6B7280" />}
             textContentType="telephoneNumber"
             keyboardType="phone-pad"
@@ -385,8 +385,8 @@ const SignUp = () => {
             }
           />
           <InputField
-            label="Password *"
-            placeholder="Enter password"
+            label="Парола *"
+            placeholder="Въведете парола"
             icon={icons.lock}
             secureTextEntry={true}
             textContentType="password"
@@ -402,7 +402,7 @@ const SignUp = () => {
             error={touched.password ? errors.password : undefined}
           />
           <CustomButton
-            title="Sign Up"
+            title="Регистрация"
             onPress={onSignUpPress}
             className="mt-6"
           />
@@ -412,7 +412,7 @@ const SignUp = () => {
             className="text-lg text-center text-general-200 mt-10"
           >
             Already have an account?{" "}
-            <Text className="text-primary-500">Log In</Text>
+            <Text className="text-primary-500">Вход</Text>
           </Link>
         </View>
         <ReactNativeModal
@@ -433,7 +433,7 @@ const SignUp = () => {
               We've sent a verification code to {form.email}.
             </Text>
             <InputField
-              label={"Code"}
+              label={"Код"}
               icon={icons.lock}
               placeholder={"12345"}
               value={verification.code}
@@ -448,7 +448,7 @@ const SignUp = () => {
               </Text>
             )}
             <CustomButton
-              title="Verify Email"
+              title="Потвърди имейл"
               onPress={onPressVerify}
               className="mt-5 bg-success-500"
             />
@@ -472,7 +472,7 @@ const SignUp = () => {
               You have successfully verified your account.
             </Text>
             <CustomButton
-              title="Browse Home"
+              title="Към началната страница"
               onPress={() => {
                 setShowSuccessModal(false);
                 router.replace("/(root)/(tabs)/home");

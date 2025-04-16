@@ -40,7 +40,7 @@ const Payment = ({
       const { error } = await presentPaymentSheet();
       console.log(
         "Payment sheet presentation result:",
-        error ? error : "success",
+        error ? error : "success"
       );
 
       if (error) {
@@ -119,7 +119,7 @@ const Payment = ({
       console.error("Error in initializePaymentSheet:", error);
       Alert.alert(
         "Payment Error",
-        error instanceof Error ? error.message : "Failed to process payment",
+        error instanceof Error ? error.message : "Failed to process payment"
       );
       throw error;
     }
@@ -128,7 +128,7 @@ const Payment = ({
   return (
     <>
       <CustomButton
-        title="Confirm Ride"
+        title="Потвърди пътуването"
         className="my-10"
         onPress={openPaymentSheet}
       />
@@ -141,16 +141,16 @@ const Payment = ({
           <Image source={images.check} className="w-28 h-28 mt-5" />
 
           <Text className="text-2xl text-center font-JakartaBold mt-5">
-            Booking placed successfully
+            Резервацията е успешна
           </Text>
 
           <Text className="text-md text-general-200 font-JakartaRegular text-center mt-3">
-            Thank you for your booking. Your reservation has been successfully
-            placed. Please proceed with your trip.
+            Благодарим за резервацията. Вашата резервация е успешно направена.
+            Моля, продължете с пътуването си.
           </Text>
 
           <CustomButton
-            title="Back Home"
+            title="Към началната страница"
             onPress={() => {
               setSuccess(false);
               router.push("/(root)/(tabs)/home");

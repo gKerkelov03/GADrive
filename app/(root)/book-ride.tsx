@@ -14,7 +14,7 @@ const BookRide = () => {
   const { drivers, selectedDriver } = useDriverStore();
 
   const driverDetails = drivers?.filter(
-    (driver) => +driver.id === selectedDriver,
+    (driver) => +driver.id === selectedDriver
   )[0];
 
   return (
@@ -23,10 +23,10 @@ const BookRide = () => {
       merchantIdentifier="merchant.com.uber"
       urlScheme="myapp"
     >
-      <RideLayout title="Book Ride">
+      <RideLayout title="Резервирай пътуване">
         <>
           <Text className="text-xl font-JakartaSemiBold mb-3">
-            Ride Information
+            Информация за пътуването
           </Text>
 
           <View className="flex flex-col w-full items-center justify-center mt-10">
@@ -55,21 +55,27 @@ const BookRide = () => {
 
           <View className="flex flex-col w-full items-start justify-center py-3 px-5 rounded-3xl bg-general-600 mt-5">
             <View className="flex flex-row items-center justify-between w-full border-b border-white py-3">
-              <Text className="text-lg font-JakartaRegular">Ride Price</Text>
+              <Text className="text-lg font-JakartaRegular">
+                Цена на пътуването
+              </Text>
               <Text className="text-lg font-JakartaRegular text-[#0CC25F]">
                 ${driverDetails?.price}
               </Text>
             </View>
 
             <View className="flex flex-row items-center justify-between w-full border-b border-white py-3">
-              <Text className="text-lg font-JakartaRegular">Pickup Time</Text>
+              <Text className="text-lg font-JakartaRegular">
+                Час на вдигане
+              </Text>
               <Text className="text-lg font-JakartaRegular">
                 {formatTime(driverDetails?.time!)}
               </Text>
             </View>
 
             <View className="flex flex-row items-center justify-between w-full py-3">
-              <Text className="text-lg font-JakartaRegular">Car Seats</Text>
+              <Text className="text-lg font-JakartaRegular">
+                Места в колата
+              </Text>
               <Text className="text-lg font-JakartaRegular">
                 {driverDetails?.car_seats}
               </Text>

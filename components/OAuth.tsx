@@ -13,23 +13,26 @@ const OAuth = () => {
     const result = await googleOAuth(startOAuthFlow);
 
     if (result.code === "session_exists") {
-      Alert.alert("Success", "Session exists. Redirecting to home screen.");
+      Alert.alert(
+        "Успех",
+        "Сесия съществува. Пренасочване към началния екран."
+      );
       router.replace("/(root)/(tabs)/home");
     }
 
-    Alert.alert(result.success ? "Success" : "Error", result.message);
+    Alert.alert(result.success ? "Успех" : "Грешка", result.message);
   };
 
   return (
     <View>
       <View className="flex flex-row justify-center items-center mt-4 gap-x-3">
         <View className="flex-1 h-[1px] bg-general-100" />
-        <Text className="text-lg">Or</Text>
+        <Text className="text-lg">Или</Text>
         <View className="flex-1 h-[1px] bg-general-100" />
       </View>
 
       <CustomButton
-        title="Log In with Google"
+        title="Вход с Google"
         className="mt-5 w-full shadow-none"
         IconLeft={() => (
           <Image
