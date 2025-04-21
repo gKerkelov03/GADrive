@@ -74,23 +74,23 @@ export const icons = {
 export const onboarding = [
   {
     id: 1,
-    title: "The perfect ride is just a tap away!",
+    title: "Перфектното пътуване е само на един клик!",
     description:
-      "Your journey begins with Ryde. Find your ideal ride effortlessly.",
+      "Вашето пътуване започва с GADrive. Намерете идеалното си пътуване без усилия.",
     image: images.onboarding1,
   },
   {
     id: 2,
-    title: "Best car in your hands with Ryde",
+    title: "Пътувайте най комфортните коли с GADrive",
     description:
-      "Discover the convenience of finding your perfect ride with Ryde",
+      "Открийте удобството да намерите перфектното си пътуване с GADrive",
     image: images.onboarding2,
   },
   {
     id: 3,
-    title: "Your ride, your way. Let's go!",
+    title: "Вашето пътуване, по вашия начин. Да тръгваме!",
     description:
-      "Enter your destination, sit back, and let us take care of the rest.",
+      "Въведете вашата дестинация, отпуснете се и нека ние се погрижим за останалото.",
     image: images.onboarding3,
   },
 ];

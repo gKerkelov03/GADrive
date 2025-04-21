@@ -14,7 +14,7 @@ export function formatTime(minutes: number): string {
   const roundedMinutes = Math.round(minutes);
 
   if (roundedMinutes < 60) {
-    return `${roundedMinutes} min`;
+    return `${roundedMinutes} мин`;
   } else {
     const hours = Math.floor(roundedMinutes / 60);
     const remainingMinutes = roundedMinutes % 60;

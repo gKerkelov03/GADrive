@@ -36,7 +36,7 @@ const RideCard = ({ ride }: { ride: Ride }) => {
         <View className="flex flex-col w-full mt-5 bg-general-500 rounded-lg p-3 items-start justify-center">
           <View className="flex flex-row items-center w-full justify-between mb-5">
             <Text className="text-md font-JakartaMedium text-gray-500">
-              Date & Time
+              Дата и час
             </Text>
             <Text className="text-md font-JakartaBold" numberOfLines={1}>
               {formatDate(ride.created_at)}, {formatTime(ride.ride_time)}
@@ -45,7 +45,7 @@ const RideCard = ({ ride }: { ride: Ride }) => {
 
           <View className="flex flex-row items-center w-full justify-between mb-5">
             <Text className="text-md font-JakartaMedium text-gray-500">
-              Driver
+              Шофьор
             </Text>
             <Text className="text-md font-JakartaBold">
               {ride.driver.first_name} {ride.driver.last_name}
@@ -54,7 +54,7 @@ const RideCard = ({ ride }: { ride: Ride }) => {
 
           <View className="flex flex-row items-center w-full justify-between mb-5">
             <Text className="text-md font-JakartaMedium text-gray-500">
-              Car Seats
+              Свободни места
             </Text>
             <Text className="text-md font-JakartaBold">
               {ride.driver.car_seats}
@@ -63,7 +63,7 @@ const RideCard = ({ ride }: { ride: Ride }) => {
 
           <View className="flex flex-row items-center w-full justify-between">
             <Text className="text-md font-JakartaMedium text-gray-500">
-              Payment Status
+              Статус на плащането
             </Text>
             <Text
               className={`text-md capitalize font-JakartaBold ${ride.payment_status === "paid" ? "text-green-500" : "text-red-500"}`}
