@@ -427,10 +427,10 @@ const SignUp = () => {
         >
           <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
             <Text className="font-JakartaExtraBold text-2xl mb-2">
-              Verification
+              Верификация
             </Text>
             <Text className="font-Jakarta mb-5">
-              We've sent a verification code to {form.email}.
+              Изпратен е код за потвърждение на вашият имейл {form.email}.
             </Text>
             <InputField
               label={"Код"}
