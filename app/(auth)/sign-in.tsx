@@ -109,7 +109,7 @@ const SignIn = () => {
         <View className="relative w-full h-[250px]">
           <Image source={images.signUpCar} className="z-0 w-full h-[250px]" />
           <Text className="text-2xl text-black font-JakartaSemiBold absolute bottom-5 left-5">
-            Welcome 👋
+            Добре дошли отново! 👋
           </Text>
         </View>
 
@@ -157,8 +157,8 @@ const SignIn = () => {
             href="/sign-up"
             className="text-lg text-center text-general-200 mt-10"
           >
-            Don't have an account?{" "}
-            <Text className="text-primary-500">Регистрация</Text>
+            Нямате акаунт?
+            <Text className="text-primary-500"> Регистрация</Text>
           </Link>
         </View>
       </View>
