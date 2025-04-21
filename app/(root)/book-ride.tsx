@@ -1,12 +1,17 @@
 import { useUser } from "@clerk/clerk-expo";
 import { StripeProvider } from "@stripe/stripe-react-native";
-import { Image, Text, View } from "react-native";
+import { Image, Text, View, LogBox } from "react-native";
 
 import Payment from "@/components/Payment";
 import RideLayout from "@/components/RideLayout";
 import { icons } from "@/constants";
 import { formatTime } from "@/lib/utils";
 import { useDriverStore, useLocationStore } from "@/store";
+
+// Suppress the VirtualizedList warning
+LogBox.ignoreLogs([
+  "VirtualizedLists should never be nested inside plain ScrollViews with the same orientation because it can break windowing and other functionality - use another VirtualizedList-backed container instead.",
+]);
 
 const BookRide = () => {
   const { user } = useUser();
@@ -64,9 +69,7 @@ const BookRide = () => {
             </View>
 
             <View className="flex flex-row items-center justify-between w-full border-b border-white py-3">
-              <Text className="text-lg font-JakartaRegular">
-                Час на вдигане
-              </Text>
+              <Text className="text-lg font-JakartaRegular">Времетраене</Text>
               <Text className="text-lg font-JakartaRegular">
                 {formatTime(driverDetails?.time!)}
               </Text>

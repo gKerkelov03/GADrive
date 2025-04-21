@@ -9,10 +9,23 @@ export async function POST(request: Request) {
     if (!first_name || !last_name || !email || !clerkId) {
       return Response.json(
         { error: "Missing required fields" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
+    // First check if user with this email already exists
+    const existingUser = await sql`
+      SELECT * FROM users WHERE email = ${email} LIMIT 1
+    `;
+
+    if (existingUser.length > 0) {
+      console.log(
+        "User with this email already exists, returning existing user"
+      );
+      return Response.json({ data: existingUser[0] }, { status: 200 });
+    }
+
+    // If user doesn't exist, create a new one
     const response = await sql`
       INSERT INTO users (
         first_name,

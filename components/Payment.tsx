@@ -37,17 +37,46 @@ const Payment = ({
     try {
       await initializePaymentSheet();
       console.log("Payment sheet initialized, presenting...");
-      const { error } = await presentPaymentSheet();
-      console.log(
-        "Payment sheet presentation result:",
-        error ? error : "success"
-      );
 
-      if (error) {
-        console.error(`Error code: ${error.code}`, error.message);
-        Alert.alert("Payment Error", error.message);
-      } else {
-        setSuccess(true);
+      // Use a try-catch block specifically for the presentPaymentSheet call
+      try {
+        const { error } = await presentPaymentSheet();
+        console.log(
+          "Payment sheet presentation result:",
+          error ? error : "success"
+        );
+
+        if (error) {
+          // Check if the error is a cancellation
+          if (error.code === "Canceled") {
+            console.log("Payment was canceled by the user");
+            // Silently handle cancellation - do nothing
+            return;
+          }
+
+          // For other errors, show an alert
+          console.error(`Error code: ${error.code}`, error.message);
+          Alert.alert("Payment Error", error.message);
+        } else {
+          setSuccess(true);
+        }
+      } catch (presentError) {
+        // Check if this is a cancellation error
+        if (
+          presentError &&
+          typeof presentError === "object" &&
+          "code" in presentError &&
+          presentError.code === "Canceled"
+        ) {
+          console.log(
+            "Payment was canceled by the user (caught in catch block)"
+          );
+          return;
+        }
+
+        // For other errors, show an alert
+        console.error("Error presenting payment sheet:", presentError);
+        Alert.alert("Payment Error", "Failed to process payment");
       }
     } catch (error) {
       console.error("Error in openPaymentSheet:", error);
