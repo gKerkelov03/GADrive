@@ -86,20 +86,16 @@ const Profile = () => {
       }
     }
     if (field === "phone") {
-      // Remove all non-digit characters
       const digitsOnly = value.replace(/\D/g, "");
 
-      // Check if the number is empty
       if (!digitsOnly) {
         return "Phone number is required";
       }
 
-      // Check if the number has at least 6 digits (minimum length for a valid phone number)
       if (digitsOnly.length < 6) {
         return "Please enter a valid phone number";
       }
 
-      // Check if the number has more than 15 digits (maximum length for a phone number)
       if (digitsOnly.length > 15) {
         return "Phone number is too long";
       }
@@ -113,7 +109,6 @@ const Profile = () => {
     if (error) {
       setErrors({ ...errors, [field]: error });
     } else {
-      // Clear error if validation passes
       const newErrors = { ...errors };
       delete newErrors[field];
       setErrors(newErrors);
@@ -148,14 +143,12 @@ const Profile = () => {
     setIsSaving(true);
 
     try {
-      // Update Clerk user profile
       if (user) {
         await user.update({
           firstName: editedData.firstName,
           lastName: editedData.lastName,
         });
 
-        // Update email in Clerk if it has changed
         if (editedData.email !== user.primaryEmailAddress?.emailAddress) {
           const newEmail = await user.createEmailAddress({
             email: editedData.email,
@@ -164,7 +157,6 @@ const Profile = () => {
         }
       }
 
-      // Update user in database
       const response = await fetchAPI(`/(api)/user/${user?.id}`, {
         method: "PATCH",
         body: JSON.stringify({
@@ -181,7 +173,6 @@ const Profile = () => {
         throw new Error(data.error || "Failed to update user in database");
       }
 
-      // Refresh user data
       await refetch();
 
       Alert.alert("Success", "Profile updated successfully");

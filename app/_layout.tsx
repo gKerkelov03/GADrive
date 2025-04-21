@@ -8,7 +8,6 @@ import "react-native-reanimated";
 
 import { tokenCache } from "@/lib/auth";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 LogBox.ignoreLogs(["Clerk:"]);
@@ -39,7 +38,7 @@ export default function RootLayout() {
 
   if (!publishableKey) {
     throw new Error(
-      "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env",
+      "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env"
     );
   }
 

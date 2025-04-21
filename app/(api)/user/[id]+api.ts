@@ -42,7 +42,6 @@ export async function PATCH(request: Request, { id }: { id: string }) {
       phone_number,
     });
 
-    // Update user in database
     const response = await sql`
       UPDATE users 
       SET 

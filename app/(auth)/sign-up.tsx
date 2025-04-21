@@ -23,7 +23,6 @@ import OAuth from "@/components/OAuth";
 import { icons, images } from "@/constants";
 import { fetchAPI } from "@/lib/fetch";
 
-// Suppress the defaultProps warning from CountryPicker
 LogBox.ignoreLogs([
   "Support for defaultProps will be removed from function components",
 ]);
@@ -97,20 +96,16 @@ const SignUp = () => {
       }
     }
     if (field === "phone") {
-      // Remove all non-digit characters
       const digitsOnly = value.replace(/\D/g, "");
 
-      // Check if the number is empty
       if (!digitsOnly) {
         return "Phone number is required";
       }
 
-      // Check if the number has at least 6 digits (minimum length for a valid phone number)
       if (digitsOnly.length < 6) {
         return "Please enter a valid phone number";
       }
 
-      // Check if the number has more than 15 digits (maximum length for a phone number)
       if (digitsOnly.length > 15) {
         return "Phone number is too long";
       }
@@ -167,19 +162,16 @@ const SignUp = () => {
     }
 
     try {
-      // Create user in Clerk with only required fields
       const signUpResult = await signUp.create({
         emailAddress: form.email,
         password: form.password,
       });
 
-      // Update Clerk user profile with additional information
       await signUp.update({
         firstName: form.firstName,
         lastName: form.lastName,
       });
 
-      // Prepare email verification
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setVerification({
         ...verification,
@@ -196,7 +188,6 @@ const SignUp = () => {
     try {
       console.log("Attempting verification with code:", verification.code);
 
-      // Complete email verification with Clerk
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code: verification.code,
       });
@@ -218,7 +209,6 @@ const SignUp = () => {
             clerkId: completeSignUp.createdUserId,
           });
 
-          // Create user in our database
           const response = await fetchAPI("/(api)/user", {
             method: "POST",
             body: JSON.stringify({
@@ -239,14 +229,12 @@ const SignUp = () => {
             throw new Error(data.error || "Failed to create user in database");
           }
 
-          // Set the active session
           await setActive({ session: completeSignUp.createdSessionId });
 
-          // Show success modal and redirect
           setVerification({
             ...verification,
             state: "success",
-            error: "", // Clear any previous errors
+            error: "",
           });
           setShowSuccessModal(true);
         } catch (err: any) {

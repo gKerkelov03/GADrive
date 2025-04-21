@@ -13,7 +13,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // First check if user with this email already exists
     const existingUser = await sql`
       SELECT * FROM users WHERE email = ${email} LIMIT 1
     `;
@@ -25,7 +24,6 @@ export async function POST(request: Request) {
       return Response.json({ data: existingUser[0] }, { status: 200 });
     }
 
-    // If user doesn't exist, create a new one
     const response = await sql`
       INSERT INTO users (
         first_name,
@@ -54,7 +52,6 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
-    // Get clerkId from path
     const url = new URL(request.url);
     const pathParts = url.pathname.split("/");
     const clerkId = pathParts[pathParts.length - 1];

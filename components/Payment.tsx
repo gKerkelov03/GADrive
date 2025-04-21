@@ -38,7 +38,6 @@ const Payment = ({
       await initializePaymentSheet();
       console.log("Payment sheet initialized, presenting...");
 
-      // Use a try-catch block specifically for the presentPaymentSheet call
       try {
         const { error } = await presentPaymentSheet();
         console.log(
@@ -47,21 +46,17 @@ const Payment = ({
         );
 
         if (error) {
-          // Check if the error is a cancellation
           if (error.code === "Canceled") {
             console.log("Payment was canceled by the user");
-            // Silently handle cancellation - do nothing
             return;
           }
 
-          // For other errors, show an alert
           console.error(`Error code: ${error.code}`, error.message);
           Alert.alert("Payment Error", error.message);
         } else {
           setSuccess(true);
         }
       } catch (presentError) {
-        // Check if this is a cancellation error
         if (
           presentError &&
           typeof presentError === "object" &&
@@ -74,7 +69,6 @@ const Payment = ({
           return;
         }
 
-        // For other errors, show an alert
         console.error("Error presenting payment sheet:", presentError);
         Alert.alert("Payment Error", "Failed to process payment");
       }
@@ -124,7 +118,6 @@ const Payment = ({
         throw error;
       }
 
-      // Create ride record after successful payment
       await fetchAPI("/(api)/ride/create", {
         method: "POST",
         headers: {
