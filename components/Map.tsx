@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, View, LogBox } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 
@@ -12,6 +12,8 @@ import {
 } from "@/lib/map";
 import { useDriverStore, useLocationStore } from "@/store";
 import { Driver, MarkerData } from "@/types/type";
+
+LogBox.ignoreLogs(["Text strings must be rendered within a <Text> component"]);
 
 const directionsAPI = process.env.EXPO_PUBLIC_DIRECTIONS_API_KEY;
 
@@ -81,57 +83,59 @@ const Map = () => {
     );
 
   return (
-    <MapView
-      provider={PROVIDER_DEFAULT}
-      className="w-full h-full rounded-2xl"
-      tintColor="black"
-      mapType="standard"
-      showsPointsOfInterest={false}
-      initialRegion={region}
-      showsUserLocation={true}
-      userInterfaceStyle="light"
-    >
-      {markers.map((marker, index) => (
-        <Marker
-          key={marker.id}
-          coordinate={{
-            latitude: marker.latitude,
-            longitude: marker.longitude,
-          }}
-          title={marker.title}
-          image={
-            selectedDriver === +marker.id ? icons.selectedMarker : icons.marker
-          }
-        />
-      ))}
-
-      {destinationLatitude && destinationLongitude && (
-        <>
+    <View className="w-full h-full">
+      <MapView
+        provider={PROVIDER_DEFAULT}
+        className="w-full h-full rounded-2xl"
+        tintColor="black"
+        mapType="standard"
+        showsPointsOfInterest={false}
+        initialRegion={region}
+        showsUserLocation={true}
+        userInterfaceStyle="light"
+      >
+        {markers.map((marker, index) => (
           <Marker
-            key="destination"
+            key={marker.id}
             coordinate={{
-              latitude: destinationLatitude,
-              longitude: destinationLongitude,
+              latitude: marker.latitude,
+              longitude: marker.longitude,
             }}
-            title="Дестинация"
-            image={icons.pin}
+            image={
+              selectedDriver === +marker.id
+                ? icons.selectedMarker
+                : icons.marker
+            }
           />
-          <MapViewDirections
-            origin={{
-              latitude: userLatitude!,
-              longitude: userLongitude!,
-            }}
-            destination={{
-              latitude: destinationLatitude,
-              longitude: destinationLongitude,
-            }}
-            apikey={directionsAPI!}
-            strokeColor="#0286FF"
-            strokeWidth={2}
-          />
-        </>
-      )}
-    </MapView>
+        ))}
+
+        {destinationLatitude && destinationLongitude && (
+          <>
+            <Marker
+              key="destination"
+              coordinate={{
+                latitude: destinationLatitude,
+                longitude: destinationLongitude,
+              }}
+              image={icons.pin}
+            />
+            <MapViewDirections
+              origin={{
+                latitude: userLatitude!,
+                longitude: userLongitude!,
+              }}
+              destination={{
+                latitude: destinationLatitude,
+                longitude: destinationLongitude,
+              }}
+              apikey={directionsAPI!}
+              strokeColor="#0286FF"
+              strokeWidth={2}
+            />
+          </>
+        )}
+      </MapView>
+    </View>
   );
 };
 

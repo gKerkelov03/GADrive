@@ -27,6 +27,7 @@ const Payment = ({
     destinationLatitude,
     destinationAddress,
     destinationLongitude,
+    setDestinationLocation,
   } = useLocationStore();
 
   const { userId } = useAuth();
@@ -76,6 +77,13 @@ const Payment = ({
               driver_id: driverId,
               user_id: userId,
             }),
+          });
+
+          // Clear destination location after successful payment
+          setDestinationLocation({
+            latitude: 0,
+            longitude: 0,
+            address: "",
           });
 
           setSuccess(true);
