@@ -53,8 +53,38 @@ const Payment = ({
 
           console.error(`Error code: ${error.code}`, error.message);
           Alert.alert("Payment Error", error.message);
-        } else {
+          return;
+        }
+
+        // Only create the ride after successful payment
+        try {
+          await fetchAPI("/(api)/ride/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              origin_address: userAddress,
+              destination_address: destinationAddress,
+              origin_latitude: userLatitude,
+              origin_longitude: userLongitude,
+              destination_latitude: destinationLatitude,
+              destination_longitude: destinationLongitude,
+              ride_time: rideTime.toFixed(0),
+              fare_price: parseInt(amount) * 100,
+              payment_status: "paid",
+              driver_id: driverId,
+              user_id: userId,
+            }),
+          });
+
           setSuccess(true);
+        } catch (error) {
+          console.error("Error creating ride:", error);
+          Alert.alert(
+            "Error",
+            "Payment successful but failed to create ride. Please contact support."
+          );
         }
       } catch (presentError) {
         if (
@@ -117,33 +147,9 @@ const Payment = ({
         console.error("Error initializing payment sheet:", error);
         throw error;
       }
-
-      await fetchAPI("/(api)/ride/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          origin_address: userAddress,
-          destination_address: destinationAddress,
-          origin_latitude: userLatitude,
-          origin_longitude: userLongitude,
-          destination_latitude: destinationLatitude,
-          destination_longitude: destinationLongitude,
-          ride_time: rideTime.toFixed(0),
-          fare_price: parseInt(amount) * 100,
-          payment_status: "paid",
-          driver_id: driverId,
-          user_id: userId,
-        }),
-      });
     } catch (error) {
-      console.error("Error in initializePaymentSheet:", error);
-      Alert.alert(
-        "Payment Error",
-        error instanceof Error ? error.message : "Failed to process payment"
-      );
-      throw error;
+      console.error("Error initializing payment sheet:", error);
+      Alert.alert("Error", "Failed to initialize payment sheet");
     }
   };
 

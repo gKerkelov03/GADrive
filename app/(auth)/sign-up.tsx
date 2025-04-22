@@ -457,7 +457,7 @@ const SignUp = () => {
               Verified
             </Text>
             <Text className="text-base text-gray-400 font-Jakarta text-center mt-2">
-              Успешно влязохте с профила си в Google
+              Успешно влязохте в профила си
             </Text>
             <CustomButton
               title="Към началната страница"

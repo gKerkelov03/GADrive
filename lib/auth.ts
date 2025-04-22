@@ -51,7 +51,7 @@ export const googleOAuth = async (startOAuthFlow: any) => {
         return {
           success: true,
           code: "success",
-          message: "You have successfully signed in with Google",
+          message: "Успешно влязохте с профила си",
         };
       }
     }

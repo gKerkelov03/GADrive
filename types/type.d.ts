@@ -140,3 +140,14 @@ declare interface DriverCardProps {
   selected: number;
   setSelected: () => void;
 }
+
+declare interface StripeCreateResponse {
+  paymentIntent: {
+    id: string;
+    client_secret: string;
+  };
+  ephemeralKey: {
+    secret: string;
+  };
+  customer: string;
+}
